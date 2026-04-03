@@ -9,11 +9,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "js-yaml": "^4.1.1",
     "vue": "^3.5.32",
-    "vue-router": "^4.6.4"
+    "vue-router": "^4.6.4",
+    "xml-formatter": "^3.7.0"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.4.0",
+    "@types/js-yaml": "^4.0.9",
+    "@types/xml-formatter": "^1.2.0",
     "@vitejs/plugin-vue": "^6.0.5",
     "typescript": "^6.0.2",
     "vite": "^8.0.3"

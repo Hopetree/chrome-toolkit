@@ -51,6 +51,15 @@ export const tools: ToolConfig[] = [
     component: () => import('@/tools/xml-formatter/XmlFormatter.vue'),
     keywords: ['xml', 'html', 'format', 'beautify', '格式化', '美化', '压缩'],
   },
+  {
+    id: 'json-yaml',
+    name: 'JSON/YAML 互转',
+    description: 'JSON 与 YAML 格式互转',
+    category: 'format',
+    icon: '🔄',
+    component: () => import('@/tools/json-yaml/JsonYaml.vue'),
+    keywords: ['json', 'yaml', 'convert', '转换', '互转'],
+  },
   // 生成器
   {
     id: 'uuid',

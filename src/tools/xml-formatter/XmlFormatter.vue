@@ -31,6 +31,7 @@
 import { ref, computed } from 'vue'
 import { useToast } from '@/shared/useToast'
 import { copyToClipboard } from '@/shared/clipboard'
+import xmlFormat from 'xml-formatter'
 
 const input = ref('')
 const formatted = ref('')
@@ -38,24 +39,15 @@ const error = ref('')
 const toast = useToast()
 
 const byteSize = computed(() => new Blob([formatted.value]).size)
-
 const lineCount = computed(() => formatted.value.split('\n').length)
 
 function format() {
-  if (!input.value.trim()) {
-    clear()
-    return
-  }
-
+  if (!input.value.trim()) { clear(); return }
   try {
-    const xml = input.value.trim()
-    const validationError = validateXml(xml)
-    if (validationError) {
-      error.value = validationError
-      formatted.value = ''
-      return
-    }
-    formatted.value = beautifyXml(xml)
+    formatted.value = xmlFormat(input.value.trim(), {
+      indentation: '  ',
+      collapseContent: true,
+    })
     error.value = ''
   } catch (e: unknown) {
     error.value = e instanceof Error ? e.message : 'XML 格式无效'
@@ -64,20 +56,9 @@ function format() {
 }
 
 function minify() {
-  if (!input.value.trim()) {
-    clear()
-    return
-  }
-
+  if (!input.value.trim()) { clear(); return }
   try {
-    const xml = input.value.trim()
-    const validationError = validateXml(xml)
-    if (validationError) {
-      error.value = validationError
-      formatted.value = ''
-      return
-    }
-    formatted.value = xml.replace(/>\s+</g, '><').trim()
+    formatted.value = input.value.trim().replace(/>\s+</g, '><')
     error.value = ''
   } catch (e: unknown) {
     error.value = e instanceof Error ? e.message : 'XML 格式无效'
@@ -91,136 +72,17 @@ function clear() {
   error.value = ''
 }
 
-function validateXml(xml: string): string | null {
-  const tagStack: string[] = []
-  const tagRegex = /<\/?([a-zA-Z_][\w\-.:]*)[^>]*\/?>/g
-  let match: RegExpExecArray | null
-
-  while ((match = tagRegex.exec(xml)) !== null) {
-    const fullTag = match[0]
-    const tagName = match[1]
-
-    if (fullTag.startsWith('<?') || fullTag.startsWith('<!')) {
-      continue
-    }
-
-    // Self-closing tag
-    if (fullTag.endsWith('/>')) {
-      continue
-    }
-
-    // Closing tag
-    if (fullTag.startsWith('</')) {
-      if (tagStack.length === 0 || tagStack.pop() !== tagName) {
-        return `XML 标签不匹配: </${tagName}>`
-      }
-    } else {
-      // Opening tag
-      tagStack.push(tagName)
-    }
-  }
-
-  if (tagStack.length > 0) {
-    return `XML 标签未闭合: <${tagStack[tagStack.length - 1]}>`
-  }
-
-  return null
-}
-
-function beautifyXml(xml: string): string {
-  const indent = '  '
-  let formatted = ''
-  let level = 0
-  let i = 0
-
-  while (i < xml.length) {
-    // Skip whitespace
-    if (/\s/.test(xml[i])) {
-      i++
-      continue
-    }
-
-    // XML declaration or CDATA or comments
-    if (xml.startsWith('<?', i) || xml.startsWith('<![', i)) {
-      let end = xml.indexOf('?>', i)
-      if (end === -1) {
-        end = xml.indexOf(']]>', i)
-        if (end === -1) break
-        end += 2
-      } else {
-        end += 1
-      }
-      formatted += '  '.repeat(level) + xml.substring(i, end + 1) + '\n'
-      i = end + 1
-      continue
-    }
-
-    // Closing tag
-    if (xml.startsWith('</', i)) {
-      const end = xml.indexOf('>', i)
-      if (end === -1) break
-      level = Math.max(0, level - 1)
-      formatted += '  '.repeat(level) + xml.substring(i, end + 1) + '\n'
-      i = end + 1
-      continue
-    }
-
-    // Opening tag (may have inline content)
-    const tagEnd = xml.indexOf('>', i)
-    if (tagEnd === -1) break
-
-    const tagContent = xml.substring(i, tagEnd + 1)
-    const isSelfClosing = tagContent.endsWith('/>')
-
-    if (!isSelfClosing) {
-      // Check if there's text content before the closing tag
-      const closeIdx = findClosingTag(xml, i, tagEnd)
-      if (closeIdx !== -1) {
-        const inner = xml.substring(tagEnd + 1, closeIdx).trim()
-        if (inner && !inner.startsWith('<')) {
-          // Inline content (text between tags)
-          formatted += '  '.repeat(level) + tagContent + inner + xml.substring(closeIdx) + '\n'
-          i = closeIdx + xml.substring(closeIdx).indexOf('>') + 1
-          continue
-        }
-      }
-    }
-
-    formatted += '  '.repeat(level) + tagContent + '\n'
-    if (!isSelfClosing) {
-      level++
-    }
-    i = tagEnd + 1
-  }
-
-  return formatted.trimEnd()
-}
-
-function findClosingTag(
-  xml: string,
-  openStart: number,
-  openEnd: number
-): number {
-  const tagMatch = xml.substring(openStart, openEnd + 1).match(/<([a-zA-Z_][\w\-.:]*)/)
-  if (!tagMatch) return -1
-  const tagName = tagMatch[1]
-  const closingTag = `</${tagName}>`
-  return xml.indexOf(closingTag, openEnd + 1)
-}
-
 async function copy() {
   const ok = await copyToClipboard(formatted.value)
-  if (ok) {
-    toast('已复制')
-  }
+  if (ok) toast('已复制')
 }
 </script>
 
 <style scoped>
 .error-msg {
   color: var(--error);
-  font-size: 13px;
-  padding: 6px 0;
+  font-size: var(--text-sm);
+  padding: var(--space-1) 0;
   word-break: break-all;
 }
 
@@ -243,6 +105,16 @@ async function copy() {
   overflow-y: auto;
 }
 
+.code-output::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.code-output::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
 .copy-btn {
   position: absolute;
   top: var(--space-2);
@@ -251,9 +123,9 @@ async function copy() {
 
 .stats {
   display: flex;
-  gap: 16px;
-  font-size: 12px;
-  color: #999;
-  padding-top: 4px;
+  gap: var(--space-4);
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  padding-top: var(--space-1);
 }
 </style>
