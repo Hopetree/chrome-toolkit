@@ -5,6 +5,7 @@
       class="textarea"
       placeholder="输入 JSON 字符串..."
       rows="8"
+      @paste="onPaste"
     ></textarea>
 
     <div class="tool-actions">
@@ -94,6 +95,10 @@ function syntaxHighlight(json: string): string {
       return `<span class="${cls}">${match}</span>`
     }
   )
+}
+
+function onPaste() {
+  setTimeout(() => format(), 0)
 }
 
 async function copy() {

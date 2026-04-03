@@ -60,6 +60,15 @@ export const tools: ToolConfig[] = [
     component: () => import('@/tools/json-yaml/JsonYaml.vue'),
     keywords: ['json', 'yaml', 'convert', '转换', '互转'],
   },
+  {
+    id: 'sql-formatter',
+    name: 'SQL 格式化',
+    description: 'SQL 美化与压缩',
+    category: 'format',
+    icon: '🗃️',
+    component: () => import('@/tools/sql-formatter/SqlFormatter.vue'),
+    keywords: ['sql', 'format', 'beautify', 'minify', 'mysql', 'postgresql', '格式化', '美化', '压缩'],
+  },
   // 生成器
   {
     id: 'uuid',

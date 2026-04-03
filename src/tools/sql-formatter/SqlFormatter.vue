@@ -1,9 +1,26 @@
 <template>
   <div class="tool-layout">
+    <div class="dialect-row">
+      <select v-model="dialect" class="select">
+        <option value="sql">Standard SQL</option>
+        <option value="mysql">MySQL</option>
+        <option value="postgresql">PostgreSQL</option>
+        <option value="sqlite">SQLite</option>
+        <option value="transactsql">SQL Server (T-SQL)</option>
+        <option value="plsql">Oracle (PL/SQL)</option>
+        <option value="mariadb">MariaDB</option>
+        <option value="clickhouse">ClickHouse</option>
+        <option value="bigquery">Google BigQuery</option>
+        <option value="snowflake">Snowflake</option>
+        <option value="hive">Hive</option>
+        <option value="spark">Spark SQL</option>
+      </select>
+    </div>
+
     <textarea
       v-model="input"
       class="textarea"
-      placeholder="输入 XML 字符串..."
+      placeholder="输入 SQL 语句..."
       rows="8"
       @paste="onPaste"
     ></textarea>
@@ -14,7 +31,7 @@
       <button class="btn btn-secondary" @click="clear">清空</button>
     </div>
 
-    <div v-if="error" class="error-msg">{{ error }}</div>
+    <div v-if="error" class="error-text">{{ error }}</div>
 
     <div v-if="formatted" class="output-wrapper">
       <pre class="code-output">{{ formatted }}</pre>
@@ -32,11 +49,12 @@
 import { ref, computed } from 'vue'
 import { useToast } from '@/shared/useToast'
 import { copyToClipboard } from '@/shared/clipboard'
-import xmlFormat from 'xml-formatter'
+import { format as sqlFormat } from 'sql-formatter'
 
 const input = ref('')
 const formatted = ref('')
 const error = ref('')
+const dialect = ref('sql')
 const toast = useToast()
 
 const byteSize = computed(() => new Blob([formatted.value]).size)
@@ -45,13 +63,14 @@ const lineCount = computed(() => formatted.value.split('\n').length)
 function format() {
   if (!input.value.trim()) { clear(); return }
   try {
-    formatted.value = xmlFormat(input.value.trim(), {
-      indentation: '  ',
-      collapseContent: true,
+    formatted.value = sqlFormat(input.value.trim(), {
+      language: dialect.value,
+      tabWidth: 2,
+      keywordCase: 'upper',
     })
     error.value = ''
   } catch (e: unknown) {
-    error.value = e instanceof Error ? e.message : 'XML 格式无效'
+    error.value = e instanceof Error ? e.message : 'SQL 格式无效'
     formatted.value = ''
   }
 }
@@ -59,10 +78,10 @@ function format() {
 function minify() {
   if (!input.value.trim()) { clear(); return }
   try {
-    formatted.value = input.value.trim().replace(/>\s+</g, '><')
+    formatted.value = input.value.trim().replace(/\s+/g, ' ').replace(/\s*([,()])\s*/g, '$1')
     error.value = ''
   } catch (e: unknown) {
-    error.value = e instanceof Error ? e.message : 'XML 格式无效'
+    error.value = e instanceof Error ? e.message : 'SQL 格式无效'
     formatted.value = ''
   }
 }
@@ -84,15 +103,43 @@ async function copy() {
 </script>
 
 <style scoped>
-.error-msg {
-  color: var(--error);
+.dialect-row {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.select {
+  height: 32px;
+  padding: 0 var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
   font-size: var(--text-sm);
-  padding: var(--space-1) 0;
-  word-break: break-all;
+  outline: none;
+  cursor: pointer;
+  width: 100%;
+}
+
+.select:focus {
+  border-color: var(--border-focus);
+}
+
+.error-text {
+  color: var(--error);
+  font-size: var(--text-xs);
+  line-height: 1.5;
 }
 
 .output-wrapper {
   position: relative;
+}
+
+.copy-btn {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
 }
 
 .code-output {
@@ -118,12 +165,6 @@ async function copy() {
 .code-output::-webkit-scrollbar-thumb {
   background: var(--border);
   border-radius: 3px;
-}
-
-.copy-btn {
-  position: absolute;
-  top: var(--space-2);
-  right: var(--space-2);
 }
 
 .stats {

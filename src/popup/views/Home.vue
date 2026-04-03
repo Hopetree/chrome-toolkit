@@ -1,7 +1,7 @@
 <template>
   <div>
     <header class="app-header">
-      <h1 class="app-title">Chrome Toolkit</h1>
+      <h1 class="app-title">🛠️ Chrome Toolkit</h1>
       <span class="app-version">v1.0</span>
     </header>
 
@@ -108,7 +108,7 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
 
 .tool-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: var(--space-2);
 }
 
@@ -149,8 +149,9 @@ onUnmounted(() => window.removeEventListener('keydown', onKeydown))
   color: var(--text-secondary);
   line-height: 1.3;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   overflow: hidden;
 }
 </style>
