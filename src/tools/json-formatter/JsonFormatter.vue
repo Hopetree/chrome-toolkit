@@ -11,6 +11,8 @@
     <div class="tool-actions">
       <button class="btn btn-primary" @click="format">格式化</button>
       <button class="btn btn-primary" @click="minify">压缩</button>
+      <button class="btn btn-primary" @click="escape">转义</button>
+      <button class="btn btn-primary" @click="unescape">去转义</button>
       <button class="btn btn-secondary" @click="clear">清空</button>
     </div>
 
@@ -70,6 +72,31 @@ function minify() {
     error.value = ''
   } catch (e: unknown) {
     error.value = e instanceof Error ? e.message : 'JSON 格式无效'
+    formatted.value = ''
+  }
+}
+
+function escape() {
+  if (!input.value.trim()) { clear(); return }
+  try {
+    const parsed = JSON.parse(input.value)
+    formatted.value = JSON.stringify(parsed).replace(/\\u/g, '\\u').replace(/"/g, '\\"')
+    error.value = ''
+  } catch (e: unknown) {
+    error.value = e instanceof Error ? e.message : 'JSON 格式无效'
+    formatted.value = ''
+  }
+}
+
+function unescape() {
+  if (!input.value.trim()) { clear(); return }
+  try {
+    const unescaped = input.value.replace(/\\"/g, '"')
+    const parsed = JSON.parse(unescaped)
+    formatted.value = JSON.stringify(parsed, null, 2)
+    error.value = ''
+  } catch (e: unknown) {
+    error.value = e instanceof Error ? e.message : '无法去转义，请确认输入为有效的转义 JSON'
     formatted.value = ''
   }
 }
