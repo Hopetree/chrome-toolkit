@@ -2,7 +2,7 @@
   <div>
     <header class="app-header">
       <h1 class="app-title">🛠️ Chrome Toolkit</h1>
-      <span class="app-version">v1.0</span>
+      <span class="app-version">v1.1</span>
     </header>
 
     <input
