@@ -1,6 +1,6 @@
 {
   "name": "chrome-toolkit",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -21,6 +21,7 @@
     "@types/xml-formatter": "^1.2.0",
     "@vitejs/plugin-vue": "^6.0.5",
     "typescript": "^6.0.2",
-    "vite": "^8.0.3"
+    "vite": "^8.0.3",
+    "vitest": "^4.1.4"
   }
 }

@@ -126,6 +126,15 @@ export const tools: ToolConfig[] = [
     component: () => import('@/tools/hash/HashCalculator.vue'),
     keywords: ['hash', 'md5', 'sha', 'digest', '哈希', '加密'],
   },
+  {
+    id: 'jwt-decoder',
+    name: 'JWT 解析器',
+    description: '解码 Token 内容，查看过期时间',
+    category: 'crypto',
+    icon: '🎫',
+    component: () => import('@/tools/jwt-decoder/JwtDecoder.vue'),
+    keywords: ['jwt', 'token', 'decode', 'auth', '解析', '令牌', '过期'],
+  },
   // 正则
   {
     id: 'regex-tester',
