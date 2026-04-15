@@ -145,4 +145,13 @@ export const tools: ToolConfig[] = [
     component: () => import('@/tools/char-counter/CharCounter.vue'),
     keywords: ['char', 'word', 'count', 'character', 'byte', 'line', '统计', '字符', '字数', '计数'],
   },
+  {
+    id: 'case-converter',
+    name: '大小写转换',
+    description: '驼峰/下划线/中划线等命名格式互转',
+    category: 'convert',
+    icon: 'Aa',
+    component: () => import('@/tools/case-converter/CaseConverter.vue'),
+    keywords: ['case', 'camel', 'snake', 'pascal', 'kebab', 'upper', 'lower', '大小写', '转换', '命名'],
+  },
 ]
