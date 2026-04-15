@@ -4,7 +4,7 @@ export type Category =
   | 'generator'
   | 'convert'
   | 'crypto'
-  | 'regex'
+  | 'text-process'
 
 export interface ToolConfig {
   id: string
@@ -22,7 +22,7 @@ export const CATEGORY_LABELS: Record<Category, string> = {
   generator: '生成器',
   convert: '转换',
   crypto: '加密/哈希',
-  regex: '正则',
+  'text-process': '文本处理',
 }
 
 export const CATEGORY_ORDER: Category[] = [
@@ -31,5 +31,5 @@ export const CATEGORY_ORDER: Category[] = [
   'generator',
   'convert',
   'crypto',
-  'regex',
+  'text-process',
 ]
