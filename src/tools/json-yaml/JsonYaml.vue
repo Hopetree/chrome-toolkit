@@ -155,7 +155,6 @@ async function copy() {
   overflow-x: auto;
   white-space: pre;
   line-height: 1.5;
-  max-height: 400px;
   overflow-y: auto;
 }
 

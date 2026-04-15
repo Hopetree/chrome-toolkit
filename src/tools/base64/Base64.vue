@@ -17,10 +17,10 @@
 
     <div class="output-wrapper">
       <textarea
+        ref="outputRef"
         v-model="output"
-        class="textarea"
+        class="textarea auto-textarea"
         placeholder="输出结果..."
-        rows="5"
         readonly
       ></textarea>
       <button
@@ -35,13 +35,24 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 import { useToast } from '@/shared/useToast'
 import { copyToClipboard } from '@/shared/clipboard'
 
 const input = ref('')
 const output = ref('')
+const outputRef = ref<HTMLTextAreaElement | null>(null)
 const toast = useToast()
+
+function autoResize(el: HTMLTextAreaElement | null) {
+  if (!el) return
+  el.style.height = 'auto'
+  el.style.height = el.scrollHeight + 'px'
+}
+
+watch(output, () => {
+  nextTick(() => autoResize(outputRef.value))
+})
 
 function encode() {
   if (!input.value) {
@@ -112,6 +123,12 @@ function clear() {
 <style scoped>
 .output-wrapper {
   position: relative;
+}
+
+.auto-textarea {
+  min-height: 80px;
+  resize: none;
+  overflow: hidden;
 }
 
 .copy-btn {

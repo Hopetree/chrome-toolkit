@@ -169,7 +169,6 @@ async function copy() {
   font-size: 13px;
   line-height: 1.6;
   white-space: pre-wrap;
-  max-height: 400px;
   overflow-y: auto;
 }
 

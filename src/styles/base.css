@@ -11,8 +11,6 @@
 html, body {
   width: 520px;
   min-height: 200px;
-  max-height: 580px;
-  overflow-y: auto;
   font-family: var(--font-sans);
   font-size: var(--text-base);
   line-height: 1.5;
@@ -41,3 +39,4 @@ html, body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-muted);
 }
+

@@ -109,7 +109,6 @@ async function copyAll() {
   border: 1px solid var(--border);
   border-radius: 6px;
   padding: 8px;
-  max-height: 400px;
   overflow-y: auto;
 }
 

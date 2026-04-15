@@ -140,7 +140,8 @@
   white-space: pre-wrap;
   word-break: break-all;
   overflow-y: auto;
-  max-height: 300px;
+  min-height: 48px;
+  max-height: 680px;
 }
 
 .code-output .copy-btn {
@@ -236,8 +237,3 @@
 .json-boolean { color: #9333ea; }
 .json-null { color: var(--text-muted); }
 
-/* Scrollable container */
-.scroll-area {
-  overflow-y: auto;
-  max-height: 580px;
-}
