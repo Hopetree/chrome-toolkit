@@ -26,10 +26,10 @@ export const CATEGORY_LABELS: Record<Category, string> = {
 }
 
 export const CATEGORY_ORDER: Category[] = [
-  'encode-decode',
   'format',
-  'generator',
+  'encode-decode',
   'convert',
-  'crypto',
   'text-process',
+  'crypto',
+  'generator',
 ]
